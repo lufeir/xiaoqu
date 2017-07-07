@@ -1,429 +1,165 @@
 <extend name="Public/base"/>
 
 <block name="body">
-    <div id="main-content">
-        <div id="top-alert" class="fixed alert alert-error" style="display: none;">
-            <button class="close fixed" style="margin-top: 4px;">&times;</button>
-            <div class="alert-content">这是内容</div>
+	<script type="text/javascript" src="/Public/static/uploadify/jquery.uploadify.min.js"></script>
+	<div class="main-title">
+		<h2>
+			{$info['id']?'编辑':'添加'}租售
+
+		</h2>
+	</div>
+	<form action="{:U()}" method="post" class="form-horizontal">
+		<input type="hidden" name="pid" value="{$pid}">
+		<div class="form-item">
+			<label class="item-label">标题<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">发起人<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="username" value="{$info.username|default=''}">
+			</div>
+		</div>
+		<div class="form-item">
+			<label class="item-label">价格<span class="check-tips"></span></label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="price" >&nbsp;
+				单位：
+				<select style="width: 200px;" name="price_status" value="{$info.price_status}">
+					<option value="1" <eq name="info.price_status" value="1" >selected</eq>>元/月</option>
+					<option value="2" <eq name="info.price_status" value="2" >selected</eq>>万元</option>
+				</select>
+
+			</div>
+		</div>
+        <div class="form-item">
+            <label class="item-label">类型<span class="check-tips"></span></label>
+            <div class="controls">
+				<select style="width: 200px;" name="type">
+					<option value="1" <eq name="info.type" value="1" >selected</eq>>出租</option>
+					<option value="2" <eq name="info.type" value="2" >selected</eq>>销售</option>
+				</select>
+
+			</div>
         </div>
-        <div id="main" class="main">
-
-            <!-- nav -->
-            <!-- nav -->
-
-            <script type="text/javascript" src="/Public/static/uploadify/jquery.uploadify.min.js"></script>
-            <div class="main-title cf">
-                <h2>
-                    {$info['id']?'编辑':'新增'}租售
-                </h2>
-            </div>
-
-            <div class="tab-wrap">
-                <div class="tab-content">
-                    <!-- 表单 -->
-                    <form id="form" action="{:U('add')}" method="post" class="form-horizontal">
-                        <!--<input type="hidden" name="id" value="{$info.id|default=''}">-->
-                        <!-- 基础文档模型 -->
-                        <div id="tab1" class="tab-pane tab1 in">
-                            <div class="form-item cf">
-                                <label class="item-label">标题</label>
-                                <div class="controls">
-                                    <input type="text" class="text input-large" name="title" value="{$info.title|default=''}">
-                                </div>
-                            </div>
-                            <div class="form-item cf">
-                                <label class="item-label">价格</label>
-                                <div class="controls">
-                                    <input type="text" class="text input-large" name="price" value="{$info.price|default=''}">&nbsp;
-                                    单位：
-                                    <select style="width: 200px;" name="unit">
-                                        <option value="1" <eq name="info.unit" value="1" >selected</eq> >元/月</option>
-                                        <option value="2" <eq name="info.unit" value="2" >selected</eq> >万元</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-item cf">
-                                <div class="form-item cf">
-                                    <label class="item-label">类型</label>
-                                    <div class="controls">
-                                        <select style="width: 200px;" name="type">
-                                            <option value="1" <eq name="info.unit" value="1" >selected</eq>>出租</option>
-                                            <option value="2" <eq name="info.unit" value="2" >selected</eq>>销售</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="controls" id="parent">
-                                    <input type="file" id="upload_picture_path">
-                                    <input type="hidden" name="path" id="cover_id_path" value="{$info.path|default=''}"/>
-                                    <div class="upload-img-box">
-                                        <!--<notempty name="$info.path">-->
-                                            <!--<div class="upload-pre-item"><img src="{$info.path|get_cover='path'}"/></div>-->
-                                        <!--</notempty>-->
-                                    </div>
-                                </div>
-                                <script type="text/javascript">
-                                    //上传图片
-                                    /* 初始化上传插件 */
-                                    $("#upload_picture_path").uploadify({
-                                        "height": 30,
-                                        "swf": "/Public/static/uploadify/uploadify.swf",
-                                        "fileObjName": "download",
-                                        "buttonText": "上传图片",
-                                        "uploader": "/admin.php/file/uploadpicture/session_id/074fsmbf2fahqppveb3t5cg6o1.html",
-                                        "width": 120,
-                                        'removeTimeout': 1,
-                                        'fileTypeExts': '*.jpg; *.png; *.gif;',
-                                        "onUploadSuccess": uploadPicturepath,
-                                        'onFallback': function () {
-                                            alert('未检测到兼容版本的Flash.');
-                                        }
-                                    });
-                                    //将图片回显
-                                        $(function () {
-                                            var html='<div class="upload-pre-item"><img src="{$info.path}"/></div>';
-                                            $("#cover_id_path").parent().find('.upload-img-box').html(html);
-                                        })
-                                    function uploadPicturepath(file, data) {
-                                        var data = $.parseJSON(data);
-                                        var src = '';
-                                        if (data.status) {
-                                            $("#cover_id_path").val(data.path);
-                                            src = data.url || '__ROOT__' + data.path
-                                            $("#cover_id_path").parent().find('.upload-img-box').html(
-                                                '<div class="upload-pre-item"><img src="' + src + '"/></div>'
-                                            );
-                                        } else {
-                                            updateAlert(data.info);
-                                            setTimeout(function () {
-                                                $('#top-alert').find('button').click();
-                                                $(that).removeClass('disabled').prop('disabled', false);
-                                            }, 1500);
-                                        }
-                                    }
-                                </script>
-                                <label class="item-label">内容<span class="check-tips"></span></label>
-                                <div class="controls">
-                                    <label class="textarea">
-                                        <textarea name="content"></textarea>
-                                        <input type="hidden" name="parse" value="{$info.content|default= 0}">
-                                        <link rel="stylesheet" href="/Public/static/kindeditor/default/default.css" />
-                                        <script charset="utf-8" src="/Public/static/kindeditor/kindeditor-min.js"></script>
-                                        <script charset="utf-8" src="/Public/static/kindeditor/zh_CN.js"></script>
-                                        <script type="text/javascript">
-                                            var editor_content;
-                                            KindEditor.ready(function(K) {
-                                                editor_content = K.create('textarea[name="content"]', {
-                                                    allowFileManager : false,
-                                                    themesPath: K.basePath,
-                                                    width: '100%',
-                                                    height: '500px',
-                                                    resizeType: 1,
-                                                    pasteType : 2,
-                                                    urlType : 'absolute',
-                                                    fileManagerJson : '/admin.php/sale/filemanagerjson.html',
-                                                    //uploadJson : '/admin.php/sale/uploadjson.html' }
-                                                    uploadJson : '/admin.php/addons/execute/_addons/editor_for_admin/_controller/upload/_action/ke_upimg.html',
-                                                    extraFileUploadParams: {
-                                                        session_id : '074fsmbf2fahqppveb3t5cg6o1'
-                                                    }
-                                                });
-                                            });
-
-                                            $(function(){
-                                                //传统表单提交同步
-                                                $('textarea[name="content"]').closest('form').submit(function(){
-                                                    editor_content.sync();
-                                                });
-                                                //ajax提交之前同步
-                                                $('button[type="submit"],#submit,.ajax-post,#autoSave').click(function(){
-                                                    editor_content.sync();
-                                                });
-                                            })
-                                        </script>
-
-                                    </label>
-                                </div>
-                                <label class="item-label">简单描述</label>
-                                <div class="controls">
-                                    <label class="textarea">
-                                        <textarea name="intro">{$info.intro|default=''}</textarea>
-                                    </label>
-                                </div>
-                                <div class="form-item cf">
-                                    <label class="item-label">截止日期：</label>
-                                    <div class="controls">
-                                        <input type="text" class="text time" name="end_time" value="{$info.end_time|default=null|time_format}"></div>
-                                </div>
-                                <div class="form-item cf">
-                                    <label class="item-label">联系人电话</label>
-                                    <div class="controls">
-                                        <input type="text" class="text input-large" name="tel" value="{$info.tel|default=''}"></div>
-                                </div>
-                            </div>
-                            <div class="form-item cf">
-                                <input type="submit" class="btn submit-btn" value="确 定" />
-
-                                <a class="btn btn-return" href="/admin.php/Article/index/cate_id/42.html">返 回</a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</block>
-
-<block name="script">
-    <!-- /内容区 -->
-    <script type="text/javascript">
-        (function(){
-            var ThinkPHP = window.Think = {
-                "ROOT"   : "", //当前网站地址
-                "APP"    : "/admin.php?s=", //当前项目地址
-                "PUBLIC" : "/Public", //项目公共目录地址
-                "DEEP"   : "/", //PATHINFO分割符
-                "MODEL"  : ["3", "", "html"],
-                "VAR"    : ["m", "c", "a"]
-            }
-        })();
-    </script>
-    <script type="text/javascript" src="/Public/static/think.js"></script>
-    <script type="text/javascript" src="/Public/Admin/js/common.js"></script>
-    <script type="text/javascript">
-        +function(){
-            var $window = $(window), $subnav = $("#subnav"), url;
-            $window.resize(function(){
-                $("#main").css("min-height", $window.height() - 130);
-            }).resize();
-
-            /* 左边菜单高亮 */
-            url = window.location.pathname + window.location.search;
-            url = url.replace(/(\/(p)\/\d+)|(&p=\d+)|(\/(id)\/\d+)|(&id=\d+)|(\/(group)\/\d+)|(&group=\d+)/, "");
-            $subnav.find("a[href='" + url + "']").parent().addClass("current");
-
-            /* 左边菜单显示收起 */
-            $("#subnav").on("click", "h3", function(){
-                var $this = $(this);
-                $this.find(".icon").toggleClass("icon-fold");
-                $this.next().slideToggle("fast").siblings(".side-sub-menu:visible").
-                prev("h3").find("i").addClass("icon-fold").end().end().hide();
-            });
-
-            $("#subnav h3 a").click(function(e){e.stopPropagation()});
-
-            /* 头部管理员菜单 */
-            $(".user-bar").mouseenter(function(){
-                var userMenu = $(this).children(".user-menu ");
-                userMenu.removeClass("hidden");
-                clearTimeout(userMenu.data("timeout"));
-            }).mouseleave(function(){
-                var userMenu = $(this).children(".user-menu");
-                userMenu.data("timeout") && clearTimeout(userMenu.data("timeout"));
-                userMenu.data("timeout", setTimeout(function(){userMenu.addClass("hidden")}, 100));
-            });
-
-            /* 表单获取焦点变色 */
-            $("form").on("focus", "input", function(){
-                $(this).addClass('focus');
-            }).on("blur","input",function(){
-                $(this).removeClass('focus');
-            });
-            $("form").on("focus", "textarea", function(){
-                $(this).closest('label').addClass('focus');
-            }).on("blur","textarea",function(){
-                $(this).closest('label').removeClass('focus');
-            });
-
-            // 导航栏超出窗口高度后的模拟滚动条
-            var sHeight = $(".sidebar").height();
-            var subHeight  = $(".subnav").height();
-            var diff = subHeight - sHeight; //250
-            var sub = $(".subnav");
-            if(diff > 0){
-                $(window).mousewheel(function(event, delta){
-                    if(delta>0){
-                        if(parseInt(sub.css('marginTop'))>-10){
-                            sub.css('marginTop','0px');
-                        }else{
-                            sub.css('marginTop','+='+10);
-                        }
-                    }else{
-                        if(parseInt(sub.css('marginTop'))<'-'+(diff-10)){
-                            sub.css('marginTop','-'+(diff-10));
-                        }else{
-                            sub.css('marginTop','-='+10);
-                        }
-                    }
-                });
-            }
-        }();
-    </script>
-
-    <script type="text/javascript">
-        (function(){
-            var ThinkPHP = window.Think = {
-                "ROOT"   : "", //当前网站地址
-                "APP"    : "/admin.php", //当前项目地址
-                "PUBLIC" : "/Public", //项目公共目录地址
-                "DEEP"   : "/", //PATHINFO分割符
-                "MODEL"  : ["1", "1", "html"],
-                "VAR"    : ["m", "c", "a"]
-            }
-        })();
-    </script>
-    <script type="text/javascript" src="/Public/static/think.js"></script>
-    <script type="text/javascript" src="/Public/Admin/js/common.js"></script>
-    <script type="text/javascript">
-        +function(){
-            var $window = $(window), $subnav = $("#subnav"), url;
-            $window.resize(function(){
-                $("#main").css("min-height", $window.height() - 130);
-            }).resize();
-
-            /* 左边菜单高亮 */
-            url = window.location.pathname + window.location.search;
-            url = url.replace(/(\/(p)\/\d+)|(&p=\d+)|(\/(id)\/\d+)|(&id=\d+)|(\/(group)\/\d+)|(&group=\d+)/, "");
-            $subnav.find("a[href='" + url + "']").parent().addClass("current");
-
-            /* 左边菜单显示收起 */
-            $("#subnav").on("click", "h3", function(){
-                var $this = $(this);
-                $this.find(".icon").toggleClass("icon-fold");
-                $this.next().slideToggle("fast").siblings(".side-sub-menu:visible").
-                prev("h3").find("i").addClass("icon-fold").end().end().hide();
-            });
-
-            $("#subnav h3 a").click(function(e){e.stopPropagation()});
-
-            /* 头部管理员菜单 */
-            $(".user-bar").mouseenter(function(){
-                var userMenu = $(this).children(".user-menu ");
-                userMenu.removeClass("hidden");
-                clearTimeout(userMenu.data("timeout"));
-            }).mouseleave(function(){
-                var userMenu = $(this).children(".user-menu");
-                userMenu.data("timeout") && clearTimeout(userMenu.data("timeout"));
-                userMenu.data("timeout", setTimeout(function(){userMenu.addClass("hidden")}, 100));
-            });
-
-            /* 表单获取焦点变色 */
-            $("form").on("focus", "input", function(){
-                $(this).addClass('focus');
-            }).on("blur","input",function(){
-                $(this).removeClass('focus');
-            });
-            $("form").on("focus", "textarea", function(){
-                $(this).closest('label').addClass('focus');
-            }).on("blur","textarea",function(){
-                $(this).closest('label').removeClass('focus');
-            });
-
-            // 导航栏超出窗口高度后的模拟滚动条
-            var sHeight = $(".sidebar").height();
-            var subHeight  = $(".subnav").height();
-            var diff = subHeight - sHeight; //250
-            var sub = $(".subnav");
-            if(diff > 0){
-                $(window).mousewheel(function(event, delta){
-                    if(delta>0){
-                        if(parseInt(sub.css('marginTop'))>-10){
-                            sub.css('marginTop','0px');
-                        }else{
-                            sub.css('marginTop','+='+10);
-                        }
-                    }else{
-                        if(parseInt(sub.css('marginTop'))<'-'+(diff-10)){
-                            sub.css('marginTop','-'+(diff-10));
-                        }else{
-                            sub.css('marginTop','-='+10);
-                        }
-                    }
-                });
-            }
-        }();
-    </script>
-
-    <link href="/Public/static/datetimepicker/css/datetimepicker.css" rel="stylesheet" type="text/css">
-
-    <link href="/Public/static/datetimepicker/css/datetimepicker_blue.css" rel="stylesheet" type="text/css">
-    <link href="/Public/static/datetimepicker/css/dropdown.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="/Public/static/datetimepicker/js/bootstrap-datetimepicker.min.js"></script>
-    <script type="text/javascript" src="/Public/static/datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"
-            charset="UTF-8"></script>
-
-    <script type="text/javascript">
-
-        $('#submit').click(function(){
-            $('#form').submit();
-        });
-
-        $(function(){
-            $('.date').datetimepicker({
-                format: 'yyyy-mm-dd',
-                language:"zh-CN",
-                minView:2,
-                autoclose:true
-            });
-            $('.time').datetimepicker({
-                format: 'yyyy-mm-dd hh:ii',
-                language:"zh-CN",
-                minView:2,
-                autoclose:true
-            });
-            showTab();
-            highlight_subnav('/admin.php?s=/Wuye/add/pid/0.html');
-            //保存草稿
-            var interval;
-            $('#autoSave').click(function(){
-                var target_form = $(this).attr('target-form');
-                var target = $(this).attr('url')
-                var form = $('.'+target_form);
-                var query = form.serialize();
-                var that = this;
-
-                $(that).addClass('disabled').attr('autocomplete','off').prop('disabled',true);
-                $.post(target,query).success(function(data){
-                    if (data.status==1) {
-                        updateAlert(data.info ,'alert-success');
-                        $('input[name=id]').val(data.data.id);
-                    }else{
-                        updateAlert(data.info);
-                    }
-                    setTimeout(function(){
-                        $('#top-alert').find('button').click();
-                        $(that).removeClass('disabled').prop('disabled',false);
-                    },1500);
-                })
-
-                //重新开始定时器
-                clearInterval(interval);
-                autoSaveDraft();
-                return false;
-            });
-
-            //Ctrl+S保存草稿
-            $('body').keydown(function(e){
-                if(e.ctrlKey && e.which == 83){
-                    $('#autoSave').click();
-                    return false;
+		<div class="controls" id="parent">
+			<input type="file" id="upload_picture_path">
+			<input type="hidden" name="logo" id="cover_id_path" value="{$info.logo|default=''}"/>
+			<div class="upload-img-box">
+			</div>
+		</div>
+		<script type="text/javascript">
+            //上传图片
+			/* 初始化上传插件 */
+            $("#upload_picture_path").uploadify({
+                "height": 30,
+                "swf": "/Public/static/uploadify/uploadify.swf",
+                "fileObjName": "download",
+                "buttonText": "上传图片",
+                "uploader": "/admin.php/file/uploadpicture/session_id/074fsmbf2fahqppveb3t5cg6o1.html",
+                "width": 120,
+                'removeTimeout': 1,
+                'fileTypeExts': '*.jpg; *.png; *.gif;',
+                "onUploadSuccess": uploadPicturepath,
+                'onFallback': function () {
+                    alert('未检测到兼容版本的Flash.');
                 }
             });
+            //将图片回显
+            $(function () {
+                var html='<div class="upload-pre-item"><img src="{$info.logo}"/></div>';
+                $("#cover_id_path").parent().find('.upload-img-box').html(html);
+            })
 
-            //每隔一段时间保存草稿
-            function autoSaveDraft(){
-                interval = setInterval(function(){
-                    //只有基础信息填写了，才会触发
-                    var title = $('input[name=title]').val();
-                    var name = $('input[name=name]').val();
-                    var des = $('textarea[name=description]').val();
-                    if(title != '' || name != '' || des != ''){
-                        $('#autoSave').click();
-                    }
-                }, 1000*parseInt(60));
+            function uploadPicturepath(file, data) {
+                var data = $.parseJSON(data);
+                var src = '';
+                if (data.status) {
+                    $("#cover_id_path").val(data.path);
+                    src = data.url || '' + data.path
+                    $("#cover_id_path").parent().find('.upload-img-box').html(
+                        '<div class="upload-pre-item"><img src="' + src + '"/></div>'
+                    );
+                } else {
+                    updateAlert(data.info);
+                    setTimeout(function () {
+                        $('#top-alert').find('button').click();
+                        $(that).removeClass('disabled').prop('disabled', false);
+                    }, 1500);
+                }
             }
-            autoSaveDraft();
-        });
-    </script>
+		</script>
+		<label class="item-label">内容<span class="check-tips"></span></label>
+		<div class="controls">
+			<label class="textarea">
+				<textarea name="content"value="{$info.content|default=''}">{$info.content|default=''}</textarea>
+				<input type="hidden" name="parse" value="0">
+				<link rel="stylesheet" href="/Public/static/kindeditor/default/default.css" />
+				<script charset="utf-8" src="/Public/static/kindeditor/kindeditor-min.js"></script>
+				<script charset="utf-8" src="/Public/static/kindeditor/zh_CN.js"></script>
+				<script type="text/javascript">
+                    var editor_content;
+                    KindEditor.ready(function(K) {
+                        editor_content = K.create('textarea[name="content"]', {
+                            allowFileManager : false,
+                            themesPath: K.basePath,
+                            width: '100%',
+                            height: '500px',
+                            resizeType: 1,
+                            pasteType : 2,
+                            urlType : 'absolute',
+                            fileManagerJson : '/admin.php/Sale/fileManagerJson.html',
+                            //uploadJson : '/admin.php/Sale/uploadJson.html' }
+                            uploadJson : '/admin.php/Addons/execute/_addons/EditorForAdmin/_controller/Upload/_action/ke_upimg.html',
+                            extraFileUploadParams: {
+                                session_id : '21kirh6mm9q677elg6g0qmblo4'
+                            }
+                        });
+                    });
 
+                    $(function(){
+                        //传统表单提交同步
+                        $('textarea[name="content"]').closest('form').submit(function(){
+                            editor_content.sync();
+                        });
+                        //ajax提交之前同步
+                        $('button[type="submit"],#submit,.ajax-post,#autoSave').click(function(){
+                            editor_content.sync();
+                        });
+                    })
+				</script>
+
+			</label>
+		</div>
+		<label class="item-label">简单描述</label>
+		<div class="controls">
+			<label class="textarea">
+				<textarea name="description">{$info.description|default=''}</textarea>
+			</label>
+		</div>
+		<div class="form-item cf">
+			<label class="item-label">截止日期：</label>
+			<div class="controls">
+				<input type="date" class="text time" name="end_time" value="{$info.end_time}"></div>
+		</div>
+		<div class="form-item cf">
+			<label class="item-label">联系人电话</label>
+			<div class="controls">
+				<input type="text" class="text input-large" name="tel" value="{$info.tel|default=''}"></div>
+		</div>
+
+		<div class="form-item">
+			<input type="hidden" name="id" value="{$info.id|default=''}">
+			<button class="btn submit-btn ajax-post" id="submit" type="submit" target-form="form-horizontal">确 定</button>
+			<button class="btn btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+		</div>
+	</form>
+</block>
+<block name="script">
+<script type="text/javascript" charset="utf-8">
+	//导航高亮
+	highlight_subnav('{:U('index')}');
+</script>
 </block>

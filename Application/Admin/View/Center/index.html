@@ -2,18 +2,19 @@
 
 <block name="body">
     <div class="main-title">
-        <h2><present name="data">[ {$data.title} ] 子</present>菜单管理 </h2>
+        <h2><present name="data">[ {$data.title} ] 子</present>租售管理 </h2>
     </div>
 
     <div class="cf">
-        <a class="btn" href="{:U('add')}">新 增</a>
-        <button class="btn ajax-post confirm" url="{:U('del')}" target-form="ids">启 用</button>
-        <a class="btn" href="{:U('import',array('pid'=>I('get.pid',0)))}">禁 用</a>
-        <button class="btn list_sort" url="{:U('sort',array('pid'=>I('get.pid',0)),'')}">删 除</button>
+        <a class="btn" href="{:U('add',array('pid'=>I('get.pid',0)))}">新 增</a>
+        <button class="btn ajax-post" url="{:U('changeStatus?method=resumeUser')}" target-form="ids">启 用</button>
+        <button class="btn ajax-post" url="{:U('changeStatus?method=forbidUser')}" target-form="ids">禁 用</button>
+        <button class="btn ajax-post confirm" url="{:U('del')}" target-form="ids">删 除</button>
+
         <!-- 高级搜索 -->
         <div class="search-form fr cf">
             <div class="sleft">
-                <input type="text" name="title" class="search-input" value="{:I('title')}" placeholder="请输入标题名称或者发布人姓名">
+                <input type="text" name="title" class="search-input" value="{:I('title')}" placeholder="请输入菜单名称">
                 <a class="sch-btn" href="javascript:;" id="search" url="__SELF__"><i class="btn-search"></i></a>
             </div>
         </div>
@@ -27,35 +28,39 @@
                     <th class="row-selected">
                         <input class="checkbox check-all" type="checkbox">
                     </th>
-                    <th>ID</th>
                     <th>发布人</th>
-                    <th>发布人电话</th>
+                    <th>发布电话</th>
                     <th>标题</th>
                     <th>类型</th>
                     <th>价格</th>
                     <th>发布时间</th>
-                    <th>截至时间</th>
+                    <th>截止时间</th>
                     <th>状态</th>
-                    <th> 操 作</th>
+                    <th>操作</th>
                 </tr>
                 </thead>
                 <tbody>
-                <notempty name="sale">
-                    <volist name="sale" id="sale">
+                <notempty name="list">
+                    <volist name="list" id="menu">
                         <tr>
-                            <td><input class="ids row-selected" type="checkbox" name="id[]" value="{$sale.id}"></td>
-                            <td>{$sale.id}</td>
-                            <td>{$sale.name}</td>
-                            <td>{$sale.tel}</td>
-                            <td>{$sale.title}</td>
-                            <td>{$sale.type}</td>
-                            <td>{$sale.price}</td>
-                            <td>{$sale.start_time|time_format}</td>
-                            <td>{$sale.end_time|time_format}</td>
-                            <td>{:($sale['status']==1)?'启用':'不启用'}</td>
+                            <td><input class="ids row-selected" type="checkbox" name="id[]" value="{$menu.id}"></td>
+                            <td>{$menu.username}</td>
                             <td>
-                                <a title="编辑" href="{:U('edit?id='.$sale['id'])}">编辑</a>
-                                <a class="confirm ajax-get" title="删除" href="{:U('del?id='.$sale['id'])}">删除</a>
+                               {$menu.tel}
+                            </td>
+                            <td>{$menu.title}</td>
+                            <td>{$menu.type}</td>
+                            <td>{$menu.price}{$menu.price_status}</td>
+                            <td>{$menu.create_time|time_format}</td>
+                            <td>
+                                {$menu.end_time|time_format}
+                            </td>
+                            <td>
+                            {$menu.status}
+                            </td>
+                            <td>
+                                <a title="编辑" href="{:U('edit?id='.$menu['id'])}">编辑</a>
+                                <a class="confirm ajax-get" title="删除" href="{:U('del?id='.$menu['id'])}">删除</a>
                             </td>
                         </tr>
                     </volist>
