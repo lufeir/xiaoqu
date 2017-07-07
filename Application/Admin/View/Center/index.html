@@ -1,0 +1,119 @@
+<extend name="Public/base"/>
+
+<block name="body">
+    <div class="main-title">
+        <h2><present name="data">[ {$data.title} ] 子</present>菜单管理 </h2>
+    </div>
+
+    <div class="cf">
+        <a class="btn" href="{:U('add')}">新 增</a>
+        <button class="btn ajax-post confirm" url="{:U('del')}" target-form="ids">启 用</button>
+        <a class="btn" href="{:U('import',array('pid'=>I('get.pid',0)))}">禁 用</a>
+        <button class="btn list_sort" url="{:U('sort',array('pid'=>I('get.pid',0)),'')}">删 除</button>
+        <!-- 高级搜索 -->
+        <div class="search-form fr cf">
+            <div class="sleft">
+                <input type="text" name="title" class="search-input" value="{:I('title')}" placeholder="请输入标题名称或者发布人姓名">
+                <a class="sch-btn" href="javascript:;" id="search" url="__SELF__"><i class="btn-search"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="data-table table-striped">
+        <form class="ids">
+            <table>
+                <thead>
+                <tr>
+                    <th class="row-selected">
+                        <input class="checkbox check-all" type="checkbox">
+                    </th>
+                    <th>ID</th>
+                    <th>发布人</th>
+                    <th>发布人电话</th>
+                    <th>标题</th>
+                    <th>类型</th>
+                    <th>价格</th>
+                    <th>发布时间</th>
+                    <th>截至时间</th>
+                    <th>状态</th>
+                    <th> 操 作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <notempty name="sale">
+                    <volist name="sale" id="sale">
+                        <tr>
+                            <td><input class="ids row-selected" type="checkbox" name="id[]" value="{$sale.id}"></td>
+                            <td>{$sale.id}</td>
+                            <td>{$sale.name}</td>
+                            <td>{$sale.tel}</td>
+                            <td>{$sale.title}</td>
+                            <td>{$sale.type}</td>
+                            <td>{$sale.price}</td>
+                            <td>{$sale.start_time|time_format}</td>
+                            <td>{$sale.end_time|time_format}</td>
+                            <td>{:($sale['status']==1)?'启用':'不启用'}</td>
+                            <td>
+                                <a title="编辑" href="{:U('edit?id='.$sale['id'])}">编辑</a>
+                                <a class="confirm ajax-get" title="删除" href="{:U('del?id='.$sale['id'])}">删除</a>
+                            </td>
+                        </tr>
+                    </volist>
+                    <else/>
+                    <td colspan="10" class="text-center"> aOh! 暂时还没有内容! </td>
+                </notempty>
+                </tbody>
+            </table>
+        </form>
+        <!-- 分页 -->
+        <div class="page">
+
+        </div>
+    </div>
+</block>
+
+<block name="script">
+    <script type="text/javascript">
+        $(function() {
+            //搜索功能
+            $("#search").click(function() {
+                var url = $(this).attr('url');
+                var query = $('.search-form').find('input').serialize();
+                query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g, '');
+                query = query.replace(/^&/g, '');
+                if (url.indexOf('?') > 0) {
+                    url += '&' + query;
+                } else {
+                    url += '?' + query;
+                }
+                window.location.href = url;
+            });
+            //回车搜索
+            $(".search-input").keyup(function(e) {
+                if (e.keyCode === 13) {
+                    $("#search").click();
+                    return false;
+                }
+            });
+            //导航高亮
+            highlight_subnav('{:U('index')}');
+            //点击排序
+            $('.list_sort').click(function(){
+                var url = $(this).attr('url');
+                var ids = $('.ids:checked');
+                var param = '';
+                if(ids.length > 0){
+                    var str = new Array();
+                    ids.each(function(){
+                        str.push($(this).val());
+                    });
+                    param = str.join(',');
+                }
+
+                if(url != undefined && url != ''){
+                    window.location.href = url + '/ids/' + param;
+                }
+            });
+        });
+    </script>
+</block>
