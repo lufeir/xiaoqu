@@ -8,17 +8,20 @@
 namespace Admin\Controller;
 class CenterController extends AdminController{
     public function index(){
-        $pid = I('get.pid', 0);
-        /* 获取频道列表 */
-        $map  = array('status' => array('gt', -1), 'pid'=>$pid);
-        $list = D('Sale')->where($map)->order('id asc')->select();
+        $User = M('Sale'); // 实例化User对象
+        $count      = $User->count();// 查询满足要求的总记录数
+        $Page       = new \Think\Page($count,2);// 实例化分页类 传入总记录数和每页显示的记录数(25)
+        $show       = $Page->show();// 分页显示输出
+// 进行分页数据查询 注意limit方法的参数要使用Page类的属性
+        $list = $User->where('status=1')->limit($Page->firstRow.','.$Page->listRows)->select();
         foreach ($list as &$list1){
             $list1['status']=$list1['status']==1?'启用':'禁用';
             $list1['type']=$list1['type']==1?'出租':'销售';
             $list1['price_status']=$list1['price_status']==1?'元/月':'万元';
         }
+//        赋值分页输出
         $this->assign('list', $list);
-        $this->assign('pid', $pid);
+        $this->assign('page',$show);
         $this->display();
     }
     public function add(){
