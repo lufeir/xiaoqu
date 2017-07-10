@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
-    <title>小区通知</title>
+    <title>便民服务</title>
 
     <!-- Bootstrap -->
     <link href="Public/Wechat/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -46,18 +46,18 @@
     <div class="container-fluid" id="content_list">
         <notempty name="list">
             <volist name="list" id="list">
-                    <div class="row noticeList">
-                        <a href="{:U('content?id='.$list['id'])}">
-                            <div class="col-xs-2">
-                                <img class="noticeImg" src="{$list.path}" />
-                            </div>
-                            <div class="col-xs-10">
-                                <p class="title">{$list.title}</p>
-                                <p class="intro">{$list.description}</p>
-                                <p class="info">浏览: {$list.view}<span class="pull-right">{$list.create_time|time_format}</span> </p>
-                            </div>
-                        </a>
-                    </div>
+                <div class="row noticeList">
+                    <a href="{:U('content?id='.$list['id'])}">
+                        <div class="col-xs-2">
+                            <img class="noticeImg" src="{$list.path}" />
+                        </div>
+                        <div class="col-xs-10">
+                            <p class="title">{$list.title}</p>
+                            <p class="intro">{$list.description}</p>
+                            <p class="info">浏览: {$list.view}<span class="pull-right">{$list.create_time|time_format}</span> </p>
+                        </div>
+                    </a>
+                </div>
             </volist>
         </notempty>
     </div>
@@ -65,15 +65,14 @@
 <div class="text-center">
     <button type="button" class="btn btn-info ajax-page">获取跟多~~~</button>
 </div>
-
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="Public/Wechat/jquery-1.11.2.min.js"></script>
 <!-- Include all compiled plugins (below), or include individual files as needed -->
 <script src="Public/Wechat/bootstrap/js/bootstrap.min.js"></script>
 <script type="application/javascript">
     var p = 0;
-    var url = '/wechat.php?s=/Notice/notice';
-    var inner_url = '/wechat.php?s=/Notice/content';
+    var url = '/wechat.php?s=/Service/index';
+    var inner_url = '/wechat.php?s=/Service/content';
     $(function(){
         $('.ajax-page').click(function () {
             if($(this).hasClass('ajax-page')){
@@ -107,6 +106,5 @@
 
     });
 </script>
-
 </body>
 </html>
